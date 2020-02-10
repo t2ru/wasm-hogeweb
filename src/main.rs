@@ -1,27 +1,13 @@
 use hyper::{Body, Method, Request, Response, StatusCode};
 use std::convert::Infallible;
-#[macro_use]
-extern crate rust_embed;
-
-#[derive(RustEmbed)]
-#[folder = "www/"]
-struct Asset;
-
-use std::borrow::Cow;
 use tokio::task::JoinError;
 
-impl Asset {
-    pub async fn async_get(
-        file_path: &'static str,
-    ) -> Result<Option<Cow<'static, [u8]>>, JoinError> {
-        tokio::task::spawn_blocking(move || Asset::get(file_path)).await
-    }
-}
+mod asset;
 
 async fn serve(req: Request<Body>) -> Result<Response<Body>, JoinError> {
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/") => {
-            let toppage = Asset::async_get("index.html").await?.unwrap();
+            let toppage = asset::Asset::async_get("index.html").await?.unwrap();
             Ok(Response::new(toppage.into()))
         }
         _ => Ok(Response::builder()
