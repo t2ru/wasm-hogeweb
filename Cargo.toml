@@ -11,3 +11,4 @@ rust-embed = "5.2"
 rusqlite = "0.21"
 hyper = "0.13"
 tokio = { version = "0.2", features = ["full"] }
+anyhow = "1.0"
